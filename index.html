@@ -24,7 +24,7 @@
 
         #info {
             position: absolute;
-            top: -21px;
+            top: -23px;
             width: 100%;
             text-align: center;
             z-index: 100;
@@ -168,44 +168,44 @@
         const grid = document.getElementById('grid');
         const container = document.getElementById('grid-container');
         const items = [
-            { name: 'Corrupted Kitsune', rarity: 'Prismatic', image: 'https://www.rpgstash.com/231786-catalog_page/rbl-corrupted-kitsune-roblox-other-items-558.jpg?timestamp=1753642279' },
-            { name: 'Shiba Inu', rarity: 'Uncommon', image: 'https://www.rpgstash.com/230046-catalog_page/rbl-shiba-inu-roblox-other-items-501.jpg?timestamp=1753050581' },
-            { name: 'Nihonzaru', rarity: 'Rare', image: 'https://www.rpgstash.com/230045-catalog_page/rbl-nihonzaru-roblox-other-items-496.jpg?timestamp=1753050578' },
-            { name: 'Tanuki', rarity: 'Legendary', image: 'https://www.rpgstash.com/230044-catalog_page/rbl-tanuki-roblox-other-items-491.jpg?timestamp=1753050576' },
-            { name: 'Kappa', rarity: 'Mythical', image: 'https://www.rpgstash.com/230042-catalog_page/rbl-kappa-roblox-other-items-481.jpg?timestamp=1753050571' },
-            { name: 'Tanchozuru', rarity: 'Legendary', image: 'https://www.rpgstash.com/230043-catalog_page/rbl-tanchozuru-roblox-other-items-486.jpg?timestamp=1753050574' },
-            { name: 'Kitsune', rarity: 'Prismatic', image: 'https://www.rpgstash.com/230041-catalog_page/rbl-kitsune-roblox-other-items-476.jpg?timestamp=1753050569' },
-            { name: 'Spinosaurus', rarity: 'Divine', image: 'https://www.rpgstash.com/228188-catalog_page/rbl-spinosaurus-roblox-other-items-6444.jpg?timestamp=1752451913' },
-            { name: 'Ankylosaurus', rarity: 'Mythical', image: 'https://www.rpgstash.com/228187-catalog_page/rbl-ankylosaurus-roblox-other-items-6443.jpg?timestamp=1752451911' },
-            { name: 'Dilophosaurus', rarity: 'Mythical', image: 'https://www.rpgstash.com/228186-catalog_page/rbl-dilophosaurus-roblox-other-items-6442.jpg?timestamp=1752451909' },
-            { name: 'Pachycephalosaurus', rarity: 'Legendary', image: 'https://www.rpgstash.com/228185-catalog_page/rbl-pachycephalosaurus-roblox-other-items-6441.jpg?timestamp=1752451906' },
-            { name: 'Iguanodon', rarity: 'Legendary', image: 'https://www.rpgstash.com/228184-catalog_page/rbl-iguanodon-roblox-other-items-6440.html' },
-            { name: 'Parasaurolophus', rarity: 'Legendary', image: 'https://www.rpgstash.com/228183-catalog_page/rbl-parasaurolophus-roblox-other-items-6439.jpg?timestamp=1752451901' },
-            { name: 'T-Rex', rarity: 'Divine', image: 'https://www.rpgstash.com/227222-catalog_page/rbl-t-rex-roblox-other-items-6384.jpg?timestamp=1751895725' },
-            { name: 'Brontosaurus', rarity: 'Mythical', image: 'https://www.rpgstash.com/227223-catalog_page/rbl-brontosaurus-roblox-other-items-6385.jpg?timestamp=1751895728' },
-            { name: 'Pterodactyl', rarity: 'Legendary', image: 'https://www.rpgstash.com/227224-catalog_page/rbl-pterodactyl-roblox-other-items-6386.jpg?timestamp=1751895730' },
-            { name: 'Stegosaurus', rarity: 'Legendary', image: 'https://www.rpgstash.com/227225-catalog_page/rbl-stegosaurus-roblox-other-items-6387.jpg?timestamp=1751895732' },
-            { name: 'Triceratops', rarity: 'Legendary', image: 'https://www.rpgstash.com/227226-catalog_page/rbl-triceratops-roblox-other-items-6388.jpg?timestamp=1751895734' },
-            { name: 'Raptor', rarity: 'Legendary', image: 'https://www.rpgstash.com/227227-catalog_page/rbl-raptor-roblox-other-items-6389.jpg?timestamp=1751895736' },
-            { name: 'Bald Eagle', rarity: 'Legendary', image: 'https://www.rpgstash.com/227228-catalog_page/rbl-bald-eagle-roblox-other-items-6390.jpg?timestamp=1751895738' },
-            { name: 'Fennec Fox', rarity: 'Divine', image: 'https://www.rpgstash.com/225787-catalog_page/rbl-fennec-fox-roblox-other-items-6307.jpg?timestamp=1751124649' },
-            { name: 'Hamster', rarity: 'Mythical', image: 'https://www.rpgstash.com/225788-catalog_page/rbl-hamster-roblox-other-items-6308.jpg?timestamp=1751124650' },
-            { name: 'Hyacinth Macaw', rarity: 'Mythical', image: 'https://www.rpgstash.com/225786-catalog_page/rbl-hyacinth-macaw-roblox-other-items-6306.jpg?timestamp=1751124647' },
-            { name: 'Sand Snake', rarity: 'Legendary', image: 'https://www.rpgstash.com/225784-catalog_page/rbl-sand-snake-roblox-other-items-6304.jpg?timestamp=1751124642' },
-            { name: 'Meerkat', rarity: 'Legendary', image: 'https://www.rpgstash.com/225794-catalog_page/rbl-meerkat-roblox-other-items-6314.jpg?timestamp=1751230387' },
-            { name: 'Axolotl', rarity: 'Mythical', image: 'https://www.rpgstash.com/225785-catalog_page/rbl-axolotl-roblox-other-items-6305.jpg?timestamp=1751124645' },
-            { name: 'Mimic Octopus', rarity: 'Mythical', image: 'https://www.rpgstash.com/224905-catalog_page/rbl-mimic-octopus-roblox-other-items-6247.jpg?timestamp=1750523274' },
-            { name: 'Scarlet Macaw', rarity: 'Legendary', image: 'https://www.rpgstash.com/224904-catalog_page/rbl-scarlet-macaw-roblox-other-items-6246.jpg?timestamp=1750523271' },
-            { name: 'Seal', rarity: 'Rare', image: 'https://www.rpgstash.com/224911-catalog_page/rbl-seal-roblox-other-items-6253.jpg?timestamp=1750523290' },
-            { name: 'Orangutan', rarity: 'Rare', image: 'https://www.rpgstash.com/224910-catalog_page/rbl-oragutan-roblox-other-items-6252.jpg?timestamp=1750523287' },
-            { name: 'Capybara', rarity: 'Legendary', image: 'https://www.rpgstash.com/224903-catalog_page/rbl-capybara-roblox-other-items-6245.jpg?timestamp=1750523268' },
-            { name: 'Peacock', rarity: 'Legendary', image: 'https://www.rpgstash.com/224902-catalog_page/rbl-peacock-roblox-other-items-6244.jpg?timestamp=1750523266' },
-            { name: 'Starfish', rarity: 'Common', image: 'https://www.rpgstash.com/224906-catalog_page/rbl-starfish-roblox-other-items-6248.jpg?timestamp=1750523277' },
-            { name: 'Seagull', rarity: 'Common', image: 'https://www.rpgstash.com/224907-catalog_page/rbl-seagull-roblox-other-items-6249.jpg?timestamp=1750523280' },
-            { name: 'Crab', rarity: 'Common', image: 'https://www.rpgstash.com/224908-catalog_page/rbl-crab-roblox-other-items-6250.jpg?timestamp=1750523283' },
-            { name: 'Flamingo', rarity: 'Rare', image: 'https://www.rpgstash.com/224909-catalog_page/rbl-flamingo-roblox-other-items-6251.jpg?timestamp=1750523285' },
-            { name: 'Toucan', rarity: 'Rare', image: 'https://www.rpgstash.com/224913-catalog_page/rbl-toucan-roblox-other-items-6255.jpg?timestamp=1750523295' },
-            { name: 'Sea Turtle', rarity: 'Rare', image: 'https://www.rpgstash.com/224912-catalog_page/rbl-sea-turtle-roblox-other-items-6254.jpg?timestamp=1750523292' }
+            { name: 'Corrupted Kitsune', rarity: 'Prismatic', image: 'images/rbl-corrupted-kitsune-roblox-other-items-558.jpg' },
+            { name: 'Shiba Inu', rarity: 'Uncommon', image: 'images/rbl-shiba-inu-roblox-other-items-501.jpg' },
+            { name: 'Nihonzaru', rarity: 'Rare', image: 'images/rbl-nihonzaru-roblox-other-items-496.jpg' },
+            { name: 'Tanuki', rarity: 'Legendary', image: 'images/rbl-tanuki-roblox-other-items-491.jpg' },
+            { name: 'Kappa', rarity: 'Mythical', image: 'images/rbl-kappa-roblox-other-items-481.jpg' },
+            { name: 'Tanchozuru', rarity: 'Legendary', image: 'images/rbl-tanchozuru-roblox-other-items-486.jpg' },
+            { name: 'Kitsune', rarity: 'Prismatic', image: 'images/rbl-kitsune-roblox-other-items-476.jpg' },
+            { name: 'Spinosaurus', rarity: 'Divine', image: 'images/rbl-spinosaurus-roblox-other-items-6444.jpg' },
+            { name: 'Ankylosaurus', rarity: 'Mythical', image: 'images/rbl-ankylosaurus-roblox-other-items-6443.jpg' },
+            { name: 'Dilophosaurus', rarity: 'Mythical', image: 'images/rbl-dilophosaurus-roblox-other-items-6442.jpg' },
+            { name: 'Pachycephalosaurus', rarity: 'Legendary', image: 'images/rbl-pachycephalosaurus-roblox-other-items-6441.jpg' },
+            { name: 'Iguanodon', rarity: 'Legendary', image: 'images/rbl-iguanodon-roblox-other-items-6440.jpg' },
+            { name: 'Parasaurolophus', rarity: 'Legendary', image: 'images/rbl-parasaurolophus-roblox-other-items-6439.jpg' },
+            { name: 'T-Rex', rarity: 'Divine', image: 'images/rbl-t-rex-roblox-other-items-6384.jpg' },
+            { name: 'Brontosaurus', rarity: 'Mythical', image: 'images/rbl-brontosaurus-roblox-other-items-6385.jpg' },
+            { name: 'Pterodactyl', rarity: 'Legendary', image: 'images/rbl-pterodactyl-roblox-other-items-6386.jpg' },
+            { name: 'Stegosaurus', rarity: 'Legendary', image: 'images/rbl-stegosaurus-roblox-other-items-6387.jpg' },
+            { name: 'Triceratops', rarity: 'Legendary', image: 'images/rbl-triceratops-roblox-other-items-6388.jpg' },
+            { name: 'Raptor', rarity: 'Legendary', image: 'images/rbl-raptor-roblox-other-items-6389.jpg' },
+            { name: 'Bald Eagle', rarity: 'Legendary', image: 'images/rbl-bald-eagle-roblox-other-items-6390.jpg' },
+            { name: 'Fennec Fox', rarity: 'Divine', image: 'images/rbl-fennec-fox-roblox-other-items-6307.jpg' },
+            { name: 'Hamster', rarity: 'Mythical', image: 'images/rbl-hamster-roblox-other-items-6308.jpg' },
+            { name: 'Hyacinth Macaw', rarity: 'Mythical', image: 'images/rbl-hyacinth-macaw-roblox-other-items-6306.jpg' },
+            { name: 'Sand Snake', rarity: 'Legendary', image: 'images/rbl-sand-snake-roblox-other-items-6304.jpg' },
+            { name: 'Meerkat', rarity: 'Legendary', image: 'images/rbl-meerkat-roblox-other-items-6314.jpg' },
+            { name: 'Axolotl', rarity: 'Mythical', image: 'images/rbl-axolotl-roblox-other-items-6305.jpg' },
+            { name: 'Mimic Octopus', rarity: 'Mythical', image: 'images/rbl-mimic-octopus-roblox-other-items-6247.jpg' },
+            { name: 'Scarlet Macaw', rarity: 'Legendary', image: 'images/rbl-scarlet-macaw-roblox-other-items-6246.jpg' },
+            { name: 'Seal', rarity: 'Rare', image: 'images/rbl-seal-roblox-other-items-6253.jpg' },
+            { name: 'Orangutan', rarity: 'Rare', image: 'images/rbl-oragutan-roblox-other-items-6252.jpg' },
+            { name: 'Capybara', rarity: 'Legendary', image: 'images/rbl-capybara-roblox-other-items-6245.jpg' },
+            { name: 'Peacock', rarity: 'Legendary', image: 'images/rbl-peacock-roblox-other-items-6244.jpg' },
+            { name: 'Starfish', rarity: 'Common', image: 'images/rbl-starfish-roblox-other-items-6248.jpg' },
+            { name: 'Seagull', rarity: 'Common', image: 'images/rbl-seagull-roblox-other-items-6249.jpg' },
+            { name: 'Crab', rarity: 'Common', image: 'images/rbl-crab-roblox-other-items-6250.jpg' },
+            { name: 'Flamingo', rarity: 'Rare', image: 'images/rbl-flamingo-roblox-other-items-6251.jpg' },
+            { name: 'Toucan', rarity: 'Rare', image: 'images/rbl-toucan-roblox-other-items-6255.jpg' },
+            { name: 'Sea Turtle', rarity: 'Rare', image: 'images/rbl-sea-turtle-roblox-other-items-6254.jpg' }
         ];
 
         const rarityColors = {
