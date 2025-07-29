@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Grow a Garden - 2D Showcase</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            background: linear-gradient(135deg, #a8e063 0%, #56ab2f 100%);
+            font-family: 'Fredoka One', cursive;
+            color: #fff;
+            cursor: grab;
+            user-select: none;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+        }
+        body.grabbing {
+            cursor: grabbing;
+        }
+
+        #info {
+            position: absolute;
+            top: -21px;
+            width: 100%;
+            text-align: center;
+            z-index: 100;
+            pointer-events: none;
+        }
+
+        #logo {
+            width: 500px;
+            max-width: 90%;
+            height: auto;
+            filter: drop-shadow(0px 10px 15px rgba(0, 0, 0, 0.5));
+        }
+
+
+        #grid-container {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            touch-action: none; /* Prevents default browser touch actions like scrolling */
+        }
+
+        #grid {
+            position: absolute;
+            left: 0;
+            top: 0;
+            transform-origin: 0 0;
+        }
+
+        .hexagon {
+            position: absolute;
+            width: 200px;
+            height: 230px;
+            clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+            background-color: #f0e68c;
+            display: flex;
+            justify-content: center; 
+            align-items: center;
+            transition: opacity 0.3s ease, transform 0.1s linear; 
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+            padding: 10px;
+            box-sizing: border-box;
+        }
+        
+        .hexagon.active {
+            transform-origin: center center; 
+            transform: scale(1.1);
+            box-shadow: 0 0 30px 10px rgba(255, 255, 0, 0.8);
+            z-index: 10;
+        }
+        
+        .hexagon.inactive {
+            opacity: 0.5; 
+        }
+
+        .hexagon-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px; /* Controls spacing between all items */
+        }
+
+        .hexagon-image {
+            width: 95px;
+            height: 95px;
+            object-fit: cover;
+            border-radius: 50%;
+        }
+        
+        .hexagon-title {
+            color: #3a5a40;
+            font-size: 1.3em; /* Base large font size */
+            text-align: center;
+            padding: 0 5px;
+            margin: 0;
+            line-height: 1.1;
+            font-weight: bold;
+        }
+
+        .hexagon-rarity {
+            font-size: 0.9em;
+            font-weight: bold;
+            padding: 3px 10px;
+            border-radius: 10px;
+            color: white;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+        }
+
+        /* Rarity Glows */
+        .hexagon.rarity-common {
+            box-shadow: 0 0 15px 5px #B0B0B0;
+        }
+        .hexagon.rarity-uncommon {
+            box-shadow: 0 0 15px 5px #4CAF50;
+        }
+        .hexagon.rarity-rare {
+            box-shadow: 0 0 15px 5px #2196F3;
+        }
+        .hexagon.rarity-legendary {
+            box-shadow: 0 0 20px 7px #9C27B0;
+        }
+        .hexagon.rarity-mythical {
+            box-shadow: 0 0 25px 8px #f44336;
+        }
+        .hexagon.rarity-divine {
+             box-shadow: 0 0 30px 10px #FFEB3B;
+        }
+        .hexagon.rarity-prismatic {
+            animation: prismatic-glow 2s infinite;
+        }
+
+        @keyframes prismatic-glow {
+            0% { box-shadow: 0 0 30px 10px #ff0000; }
+            16% { box-shadow: 0 0 30px 10px #ff7f00; }
+            33% { box-shadow: 0 0 30px 10px #ffff00; }
+            50% { box-shadow: 0 0 30px 10px #00ff00; }
+            66% { box-shadow: 0 0 30px 10px #0000ff; }
+            83% { box-shadow: 0 0 30px 10px #4b0082; }
+            100% { box-shadow: 0 0 30px 10px #9400d3; }
+        }
+
+        /* Media Query for smaller screens */
+        @media (max-width: 600px) {
+            #logo {
+                width: 300px;
+            }
+        }
+
+    </style>
+</head>
+<body>
+
+    <div id="info">
+        <img id="logo" src="https://static.wikia.nocookie.net/growagarden/images/3/39/Site-community-image/revision/latest?cb=20250514081717" alt="Grow a Garden Logo" onerror="this.style.display='none'">
+    </div>
+
+    <div id="grid-container">
+        <div id="grid"></div>
+    </div>
+
+    <script>
+        const grid = document.getElementById('grid');
+        const container = document.getElementById('grid-container');
+        const items = [
+            { name: 'Corrupted Kitsune', rarity: 'Prismatic', image: 'https://www.rpgstash.com/231786-catalog_page/rbl-corrupted-kitsune-roblox-other-items-558.jpg?timestamp=1753642279' },
+            { name: 'Shiba Inu', rarity: 'Uncommon', image: 'https://www.rpgstash.com/230046-catalog_page/rbl-shiba-inu-roblox-other-items-501.jpg?timestamp=1753050581' },
+            { name: 'Nihonzaru', rarity: 'Rare', image: 'https://www.rpgstash.com/230045-catalog_page/rbl-nihonzaru-roblox-other-items-496.jpg?timestamp=1753050578' },
+            { name: 'Tanuki', rarity: 'Legendary', image: 'https://www.rpgstash.com/230044-catalog_page/rbl-tanuki-roblox-other-items-491.jpg?timestamp=1753050576' },
+            { name: 'Kappa', rarity: 'Mythical', image: 'https://www.rpgstash.com/230042-catalog_page/rbl-kappa-roblox-other-items-481.jpg?timestamp=1753050571' },
+            { name: 'Tanchozuru', rarity: 'Legendary', image: 'https://www.rpgstash.com/230043-catalog_page/rbl-tanchozuru-roblox-other-items-486.jpg?timestamp=1753050574' },
+            { name: 'Kitsune', rarity: 'Prismatic', image: 'https://www.rpgstash.com/230041-catalog_page/rbl-kitsune-roblox-other-items-476.jpg?timestamp=1753050569' },
+            { name: 'Spinosaurus', rarity: 'Divine', image: 'https://www.rpgstash.com/228188-catalog_page/rbl-spinosaurus-roblox-other-items-6444.jpg?timestamp=1752451913' },
+            { name: 'Ankylosaurus', rarity: 'Mythical', image: 'https://www.rpgstash.com/228187-catalog_page/rbl-ankylosaurus-roblox-other-items-6443.jpg?timestamp=1752451911' },
+            { name: 'Dilophosaurus', rarity: 'Mythical', image: 'https://www.rpgstash.com/228186-catalog_page/rbl-dilophosaurus-roblox-other-items-6442.jpg?timestamp=1752451909' },
+            { name: 'Pachycephalosaurus', rarity: 'Legendary', image: 'https://www.rpgstash.com/228185-catalog_page/rbl-pachycephalosaurus-roblox-other-items-6441.jpg?timestamp=1752451906' },
+            { name: 'Iguanodon', rarity: 'Legendary', image: 'https://www.rpgstash.com/228184-catalog_page/rbl-iguanodon-roblox-other-items-6440.html' },
+            { name: 'Parasaurolophus', rarity: 'Legendary', image: 'https://www.rpgstash.com/228183-catalog_page/rbl-parasaurolophus-roblox-other-items-6439.jpg?timestamp=1752451901' },
+            { name: 'T-Rex', rarity: 'Divine', image: 'https://www.rpgstash.com/227222-catalog_page/rbl-t-rex-roblox-other-items-6384.jpg?timestamp=1751895725' },
+            { name: 'Brontosaurus', rarity: 'Mythical', image: 'https://www.rpgstash.com/227223-catalog_page/rbl-brontosaurus-roblox-other-items-6385.jpg?timestamp=1751895728' },
+            { name: 'Pterodactyl', rarity: 'Legendary', image: 'https://www.rpgstash.com/227224-catalog_page/rbl-pterodactyl-roblox-other-items-6386.jpg?timestamp=1751895730' },
+            { name: 'Stegosaurus', rarity: 'Legendary', image: 'https://www.rpgstash.com/227225-catalog_page/rbl-stegosaurus-roblox-other-items-6387.jpg?timestamp=1751895732' },
+            { name: 'Triceratops', rarity: 'Legendary', image: 'https://www.rpgstash.com/227226-catalog_page/rbl-triceratops-roblox-other-items-6388.jpg?timestamp=1751895734' },
+            { name: 'Raptor', rarity: 'Legendary', image: 'https://www.rpgstash.com/227227-catalog_page/rbl-raptor-roblox-other-items-6389.jpg?timestamp=1751895736' },
+            { name: 'Bald Eagle', rarity: 'Legendary', image: 'https://www.rpgstash.com/227228-catalog_page/rbl-bald-eagle-roblox-other-items-6390.jpg?timestamp=1751895738' },
+            { name: 'Fennec Fox', rarity: 'Divine', image: 'https://www.rpgstash.com/225787-catalog_page/rbl-fennec-fox-roblox-other-items-6307.jpg?timestamp=1751124649' },
+            { name: 'Hamster', rarity: 'Mythical', image: 'https://www.rpgstash.com/225788-catalog_page/rbl-hamster-roblox-other-items-6308.jpg?timestamp=1751124650' },
+            { name: 'Hyacinth Macaw', rarity: 'Mythical', image: 'https://www.rpgstash.com/225786-catalog_page/rbl-hyacinth-macaw-roblox-other-items-6306.jpg?timestamp=1751124647' },
+            { name: 'Sand Snake', rarity: 'Legendary', image: 'https://www.rpgstash.com/225784-catalog_page/rbl-sand-snake-roblox-other-items-6304.jpg?timestamp=1751124642' },
+            { name: 'Meerkat', rarity: 'Legendary', image: 'https://www.rpgstash.com/225794-catalog_page/rbl-meerkat-roblox-other-items-6314.jpg?timestamp=1751230387' },
+            { name: 'Axolotl', rarity: 'Mythical', image: 'https://www.rpgstash.com/225785-catalog_page/rbl-axolotl-roblox-other-items-6305.jpg?timestamp=1751124645' },
+            { name: 'Mimic Octopus', rarity: 'Mythical', image: 'https://www.rpgstash.com/224905-catalog_page/rbl-mimic-octopus-roblox-other-items-6247.jpg?timestamp=1750523274' },
+            { name: 'Scarlet Macaw', rarity: 'Legendary', image: 'https://www.rpgstash.com/224904-catalog_page/rbl-scarlet-macaw-roblox-other-items-6246.jpg?timestamp=1750523271' },
+            { name: 'Seal', rarity: 'Rare', image: 'https://www.rpgstash.com/224911-catalog_page/rbl-seal-roblox-other-items-6253.jpg?timestamp=1750523290' },
+            { name: 'Orangutan', rarity: 'Rare', image: 'https://www.rpgstash.com/224910-catalog_page/rbl-oragutan-roblox-other-items-6252.jpg?timestamp=1750523287' },
+            { name: 'Capybara', rarity: 'Legendary', image: 'https://www.rpgstash.com/224903-catalog_page/rbl-capybara-roblox-other-items-6245.jpg?timestamp=1750523268' },
+            { name: 'Peacock', rarity: 'Legendary', image: 'https://www.rpgstash.com/224902-catalog_page/rbl-peacock-roblox-other-items-6244.jpg?timestamp=1750523266' },
+            { name: 'Starfish', rarity: 'Common', image: 'https://www.rpgstash.com/224906-catalog_page/rbl-starfish-roblox-other-items-6248.jpg?timestamp=1750523277' },
+            { name: 'Seagull', rarity: 'Common', image: 'https://www.rpgstash.com/224907-catalog_page/rbl-seagull-roblox-other-items-6249.jpg?timestamp=1750523280' },
+            { name: 'Crab', rarity: 'Common', image: 'https://www.rpgstash.com/224908-catalog_page/rbl-crab-roblox-other-items-6250.jpg?timestamp=1750523283' },
+            { name: 'Flamingo', rarity: 'Rare', image: 'https://www.rpgstash.com/224909-catalog_page/rbl-flamingo-roblox-other-items-6251.jpg?timestamp=1750523285' },
+            { name: 'Toucan', rarity: 'Rare', image: 'https://www.rpgstash.com/224913-catalog_page/rbl-toucan-roblox-other-items-6255.jpg?timestamp=1750523295' },
+            { name: 'Sea Turtle', rarity: 'Rare', image: 'https://www.rpgstash.com/224912-catalog_page/rbl-sea-turtle-roblox-other-items-6254.jpg?timestamp=1750523292' }
+        ];
+
+        const rarityColors = {
+            'Common': '#B0B0B0',
+            'Uncommon': '#4CAF50',
+            'Rare': '#2196F3',
+            'Legendary': '#9C27B0',
+            'Mythical': '#f44336',
+            'Divine': '#FFEB3B',
+            'Prismatic': 'linear-gradient(45deg, red, orange, yellow, green, blue, indigo, violet)'
+        };
+        
+        const hexWidth = 200;
+        const hexHeight = 230;
+        const gap = 30;
+        
+        const horiz_dist = hexWidth + gap;
+        const vert_dist = (hexHeight * 3/4) + gap;
+
+        const activeHexagons = new Map();
+
+        // --- State for Pan, Zoom, and Parallax ---
+        let transformState = { x: window.innerWidth / 2, y: window.innerHeight / 2, scale: window.innerWidth < 600 ? 0.3 : 0.5 };
+        let targetTransform = { ...transformState };
+        let parallaxOffset = { x: 0, y: 0 };
+        let targetParallax = { x: 0, y: 0 };
+        
+        let panning = false;
+        let startPan = { x: 0, y: 0 };
+        
+        let initialPinchDistance = 0;
+
+        // --- Core Animation Loop ---
+        function lerp(start, end, amount) {
+            return (1 - amount) * start + amount * end;
+        }
+
+        function animationLoop() {
+            // Smoothly interpolate transform states for fluid motion
+            transformState.scale = lerp(transformState.scale, targetTransform.scale, 0.1);
+            transformState.x = lerp(transformState.x, targetTransform.x, 0.1);
+            transformState.y = lerp(transformState.y, targetTransform.y, 0.1);
+            parallaxOffset.x = lerp(parallaxOffset.x, targetParallax.x, 0.1);
+            parallaxOffset.y = lerp(parallaxOffset.y, targetParallax.y, 0.1);
+
+            // Apply the combined transform: pan, parallax, and zoom
+            grid.style.transform = `translate(${transformState.x + parallaxOffset.x}px, ${transformState.y + parallaxOffset.y}px) scale(${transformState.scale})`;
+            
+            updateVisibleHexagons();
+            updateActiveHexagonHighlight();
+            
+            requestAnimationFrame(animationLoop);
+        }
+        
+        // --- Input Handlers (Mouse) ---
+        container.addEventListener('mousedown', (e) => {
+            e.preventDefault();
+            panning = true;
+            document.body.classList.add('grabbing');
+            startPan = { x: e.clientX - targetTransform.x, y: e.clientY - targetTransform.y };
+        });
+
+        window.addEventListener('mouseup', () => {
+            panning = false;
+            document.body.classList.remove('grabbing');
+        });
+
+        window.addEventListener('mousemove', (e) => {
+            if (!panning) return;
+            targetTransform.x = e.clientX - startPan.x;
+            targetTransform.y = e.clientY - startPan.y;
+        });
+
+        container.addEventListener('wheel', (e) => {
+            e.preventDefault();
+            const xs = (e.clientX - targetTransform.x) / targetTransform.scale;
+            const ys = (e.clientY - targetTransform.y) / targetTransform.scale;
+            const delta = -e.deltaY;
+            
+            const newScale = targetTransform.scale * (1 + delta / 1000);
+            const maxScale = 4;
+            const minScale = 0.2;
+            
+            targetTransform.scale = Math.min(Math.max(newScale, minScale), maxScale);
+            targetTransform.x = e.clientX - xs * targetTransform.scale;
+            targetTransform.y = e.clientY - ys * targetTransform.scale;
+        });
+
+        // --- Input Handlers (Touch) ---
+        container.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            document.body.classList.add('grabbing');
+            if (e.touches.length === 1) { // Pan
+                panning = true;
+                startPan = { x: e.touches[0].clientX - targetTransform.x, y: e.touches[0].clientY - targetTransform.y };
+            } else if (e.touches.length === 2) { // Zoom
+                panning = false;
+                initialPinchDistance = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
+            }
+        }, { passive: false });
+
+        window.addEventListener('touchend', (e) => {
+             document.body.classList.remove('grabbing');
+             panning = false;
+             initialPinchDistance = 0;
+        });
+        
+        window.addEventListener('touchmove', (e) => {
+             e.preventDefault();
+             if (panning && e.touches.length === 1) { // Pan
+                targetTransform.x = e.touches[0].clientX - startPan.x;
+                targetTransform.y = e.touches[0].clientY - startPan.y;
+             } else if (e.touches.length === 2) { // Zoom
+                const currentPinchDistance = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
+                if (initialPinchDistance <= 0) {
+                    initialPinchDistance = currentPinchDistance;
+                    return;
+                }
+
+                const scaleFactor = currentPinchDistance / initialPinchDistance;
+                const newScale = targetTransform.scale * scaleFactor;
+
+                // Center zoom on the midpoint of the two fingers
+                const midX = (e.touches[0].clientX + e.touches[1].clientX) / 2;
+                const midY = (e.touches[0].clientY + e.touches[1].clientY) / 2;
+                const xs = (midX - targetTransform.x) / targetTransform.scale;
+                const ys = (midY - targetTransform.y) / targetTransform.scale;
+
+                targetTransform.scale = Math.min(Math.max(newScale, 0.2), 4);
+                targetTransform.x = midX - xs * targetTransform.scale;
+                targetTransform.y = midY - ys * targetTransform.scale;
+
+                initialPinchDistance = currentPinchDistance;
+             }
+        }, { passive: false });
+
+
+        // --- Input Handlers (Sensors & Resize) ---
+        window.addEventListener('deviceorientation', (e) => {
+            // Only apply parallax on devices that provide this data
+            if (e.gamma === null || e.beta === null) return;
+            const gamma = e.gamma; // Left/Right tilt (-90 to 90)
+            const beta = e.beta;   // Front/Back tilt (-180 to 180)
+            
+            const parallaxAmount = 40;
+            targetParallax.x = (gamma / 90) * -parallaxAmount;
+            targetParallax.y = (beta / 90) * -parallaxAmount;
+        });
+
+        window.addEventListener('resize', () => {
+             // Recenter on resize/orientation change
+             targetTransform.x = window.innerWidth / 2;
+             targetTransform.y = window.innerHeight / 2;
+        });
+
+
+        // --- Grid Management ---
+        function createHexagon(row, col) {
+            const safeRow = ((row % items.length) + items.length) % items.length;
+            const safeCol = ((col % items.length) + items.length) % items.length;
+            const itemIndex = (safeRow * 10 + safeCol) % items.length;
+            const currentItem = items[itemIndex];
+
+            const hexElement = document.createElement('div');
+            hexElement.className = 'hexagon';
+            hexElement.classList.add(`rarity-${currentItem.rarity.toLowerCase()}`);
+            
+            let x = col * horiz_dist;
+            let y = row * vert_dist;
+            if (Math.abs(row) % 2 !== 0) {
+                x += horiz_dist / 2;
+            }
+            
+            hexElement.style.transform = `translate(${x}px, ${y}px)`;
+            
+            const title = currentItem.name;
+            let titleStyle = '';
+            if (title.length > 18) {
+                titleStyle = 'style="font-size: 0.9em;"'; 
+            } else if (title.length > 14) {
+                titleStyle = 'style="font-size: 1.1em;"';
+            }
+
+            const rarityColor = rarityColors[currentItem.rarity] || '#ccc';
+            
+            hexElement.innerHTML = `
+                <div class="hexagon-content">
+                    <img class="hexagon-image" src="${currentItem.image}" alt="${currentItem.name}" onerror="this.src='https://placehold.co/100x100/a8e063/3a5a40?text=Img';">
+                    <p class="hexagon-title" ${titleStyle}>${title}</p>
+                    <div class="hexagon-rarity" style="background: ${rarityColor};">${currentItem.rarity}</div>
+                </div>
+            `;
+            return hexElement;
+        }
+
+        function updateVisibleHexagons() {
+            const hexagonsToKeep = new Set();
+            
+            const viewLeft = -transformState.x / transformState.scale;
+            const viewTop = -transformState.y / transformState.scale;
+            const viewWidth = window.innerWidth / transformState.scale;
+            const viewHeight = window.innerHeight / transformState.scale;
+            const viewRight = viewLeft + viewWidth;
+            const viewBottom = viewTop + viewHeight;
+
+            const buffer = 2;
+
+            const startRow = Math.floor(viewTop / vert_dist) - buffer;
+            const endRow = Math.ceil(viewBottom / vert_dist) + buffer;
+            
+            const startCol = Math.floor((viewLeft - horiz_dist / 2) / horiz_dist) - buffer;
+            const endCol = Math.ceil((viewRight + horiz_dist / 2) / horiz_dist) + buffer;
+            
+            for (let row = startRow; row <= endRow; row++) {
+                for (let col = startCol; col <= endCol; col++) {
+                    const key = `${row},${col}`;
+                    hexagonsToKeep.add(key);
+
+                    if (!activeHexagons.has(key)) {
+                        const newHex = createHexagon(row, col);
+                        activeHexagons.set(key, newHex);
+                        grid.appendChild(newHex);
+                    }
+                }
+            }
+
+            for (const [key, element] of activeHexagons.entries()) {
+                if (!hexagonsToKeep.has(key)) {
+                    element.remove();
+                    activeHexagons.delete(key);
+                }
+            }
+        }
+
+        function updateActiveHexagonHighlight() {
+            let closestHex = null;
+            let minDistance = Infinity;
+            
+            const centerX = window.innerWidth / 2;
+            const centerY = window.innerHeight / 2;
+
+            for (const hexElement of activeHexagons.values()) {
+                const rect = hexElement.getBoundingClientRect();
+                if (rect.width === 0) continue; 
+                
+                const hexCenterX = rect.left + rect.width / 2;
+                const hexCenterY = rect.top + rect.height / 2;
+                const distance = Math.sqrt(Math.pow(hexCenterX - centerX, 2) + Math.pow(hexCenterY - centerY, 2));
+
+                if (distance < minDistance) {
+                    minDistance = distance;
+                    closestHex = hexElement;
+                }
+            }
+            
+            if (transformState.scale > 1.2 && closestHex) {
+                 for (const hexElement of activeHexagons.values()) {
+                    const originalTransform = hexElement.style.transform;
+                    if (hexElement === closestHex) {
+                        hexElement.classList.add('active');
+                        hexElement.classList.remove('inactive');
+                        hexElement.style.transform = `${originalTransform.split(')')[0]}) scale(1.1)`;
+                    } else {
+                        hexElement.classList.remove('active');
+                        hexElement.classList.add('inactive');
+                        hexElement.style.transform = `${originalTransform.split(')')[0]})`;
+                    }
+                }
+            } else {
+                for (const hexElement of activeHexagons.values()) {
+                    hexElement.classList.remove('active', 'inactive');
+                    const originalTransform = hexElement.style.transform;
+                    hexElement.style.transform = `${originalTransform.split(')')[0]})`;
+                }
+            }
+        }
+        
+        // Start the main loop
+        animationLoop();
+
+    </script>
+</body>
+</html>
